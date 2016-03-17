@@ -1,6 +1,11 @@
-from django.shortcuts import render
-from django.http import HttpResponse, Http404
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, Http404#, HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage
+#from django.contrib.auth import login, authenticate
+#from django.contrib.auth.models import User
+from django.views.decorators.http import require_GET#, require_POST
+from ask.qa.models import Question, Answer
+
 # Create your views here.
 def test(request, *args, **kwargs):
     return HttpResponse("OK")
@@ -14,7 +19,7 @@ def paginate(request, qs):
         limit = 10
     try:
         page = int(request.GET.get('page', 1))
-    except ValueError
+    except ValueError:
         raise Http404
     paginator = Paginator(qs, limit)
     try:
@@ -22,4 +27,25 @@ def paginate(request, qs):
     except EmptyPage:
         page = paginator.page(paginator.num_pages)
     return paginator, page
+
+@require_GET
+def main(request):
+    quest = Question.objects.order_by('-id')
+    paginator, page = paginate(request, quest)
+    return render(request, 'main.html', {'paginator': paginator, 'page': page, 'questions': page.object_list})
+
+@require_GET
+def popular(request):
+    quest = Question.objects.order_by('-rating')
+    paginator, page = paginate(request, quest)
+    return render(request, 'popular.html', {'paginator': paginator, 'page': page, 'questions': page.object_list})
+
+def question(request, id):
+    quest = get_object_or_404(Question, id=id)
+    try:
+        answers = Answer.objects.filter(question=quest).all()
+    except Answer.DoesNotExist:
+        answers = []
+    #a = Answer(question=quest, author=request.user)
+    return render(request, 'question.html', {'quest': quest, 'answers': answers})
 

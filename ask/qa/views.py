@@ -4,7 +4,7 @@ from django.core.paginator import Paginator, EmptyPage
 #from django.contrib.auth import login, authenticate
 #from django.contrib.auth.models import User
 from django.views.decorators.http import require_GET#, require_POST
-from ask.qa.models import Question, Answer
+import qa.models as m
 
 # Create your views here.
 def test(request, *args, **kwargs):
@@ -30,21 +30,21 @@ def paginate(request, qs):
 
 @require_GET
 def main(request):
-    quest = Question.objects.order_by('-id')
+    quest = m.Question.objects.order_by('-id')
     paginator, page = paginate(request, quest)
     return render(request, 'main.html', {'paginator': paginator, 'page': page, 'questions': page.object_list})
 
 @require_GET
 def popular(request):
-    quest = Question.objects.order_by('-rating')
+    quest = m.Question.objects.order_by('-rating')
     paginator, page = paginate(request, quest)
     return render(request, 'popular.html', {'paginator': paginator, 'page': page, 'questions': page.object_list})
 
 def question(request, id):
-    quest = get_object_or_404(Question, id=id)
+    quest = get_object_or_404(m.Question, id=id)
     try:
-        answers = Answer.objects.filter(question=quest).all()
-    except Answer.DoesNotExist:
+        answers = m.Answer.objects.filter(question=quest).all()
+    except m.Answer.DoesNotExist:
         answers = []
     #a = Answer(question=quest, author=request.user)
     return render(request, 'question.html', {'quest': quest, 'answers': answers})

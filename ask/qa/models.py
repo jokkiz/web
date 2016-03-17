@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
+
 from django.db import models
-from django.core.urlresolvers import reverse
+#from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -9,7 +10,7 @@ class Likes(models.Model):
     author = models.ForeignKey(User)
 
     class META:
-        db_table = "likes"
+        db_table = "qa_likes"
 
 
 class Question(models.Model):
@@ -24,7 +25,7 @@ class Question(models.Model):
         return self.title
 
     class META:
-        db_table = "question"
+        db_table = "qa_question"
 
 
 class Answer(models.Model):
@@ -34,5 +35,5 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, null=True)
 
     class META:
-        db_table = "answer"
+        db_table = "qa_answer"
 

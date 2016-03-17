@@ -30,7 +30,7 @@ def paginate(request, qs):
 
 @require_GET
 def main(request):
-    quest = m.Question.objects.order_by('-id')
+    quest = m.Question.objects.order_by('-added_ad')
     paginator, page = paginate(request, quest)
     return render(request, 'main.html', {'paginator': paginator, 'page': page, 'questions': page.object_list})
 
